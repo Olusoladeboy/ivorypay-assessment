@@ -3,6 +3,9 @@ import { TransactionController } from './transaction.controller';
 import { TransactionService } from './transaction.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { Transaction } from './entities/transaction.entity';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 describe('TransactionController', () => {
   let controller: TransactionController;
@@ -11,7 +14,21 @@ describe('TransactionController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TransactionController],
-      providers: [TransactionService],
+      providers: [
+        TransactionService,
+        {
+          provide: getRepositoryToken(Transaction),
+          useClass: Repository,
+        },
+        {
+          provide: CACHE_MANAGER,
+          useValue: {
+            get: jest.fn(),
+            set: jest.fn(),
+            del: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     controller = module.get<TransactionController>(TransactionController);

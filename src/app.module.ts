@@ -5,23 +5,31 @@ import { TransactionModule } from './transaction/transaction.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as redisStore from 'cache-manager-ioredis';
 import { CacheModule } from '@nestjs/cache-manager';
+import RedisClient from 'ioredis';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     TransactionModule,
     TypeOrmModule.forRoot({
       "type": "postgres",
-      "host": "iv-assessment-db.cluster-cuzjlcl29nhs.us-west-2.rds.amazonaws.com",
+      "host": process.env.POSTGRES_URI,
       "port": 5432,
-      "username": "postgres",
-      "password": "a6ymn9Z6wy7GwboRB9hr",
-      "database": "postgres",
+      "username": process.env.POSTGRES_USER,
+      "password": process.env.POSTGRES_PASSWORD,
+      "database": process.env.POSTGRES_DB,
       "entities": [
         "dist/**/*.entity{.ts,.js}"
       ],
       "synchronize": true
     }),
     CacheModule.register({
+      client: new RedisClient({
+        host: 'localhost',
+        port: 6379,
+        db: 0,
+      }),
       isGlobal: true,
       isDebug: true,
       store: redisStore,
