@@ -5,7 +5,6 @@ import { TransactionModule } from './transaction/transaction.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as redisStore from 'cache-manager-ioredis';
 import { CacheModule } from '@nestjs/cache-manager';
-import RedisClient from 'ioredis';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
@@ -25,18 +24,14 @@ import { ConfigModule } from '@nestjs/config';
       "synchronize": true
     }),
     CacheModule.register({
-      client: new RedisClient({
-        host: 'localhost',
-        port: 6379,
-        db: 0,
-      }),
       isGlobal: true,
       isDebug: true,
       store: redisStore,
-      host: 'localhost',
+      host: 'redis',
       port: 6379,
       ttl: 300, // cache TTL in secondss
-    }),],
+    }),
+  ],
   controllers: [AppController],
   providers: [
     AppService,
