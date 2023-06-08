@@ -58,6 +58,36 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+# Architecture
+
+## Architecture
+
+The code follows a typical layered architecture commonly used in NestJS applications:
+
+- Controller: The `TransactionController` class handles incoming HTTP requests, interacts with the service layer, and returns HTTP responses.
+- Service: The `TransactionService` class contains the business logic for handling transactions. It communicates with the database via the `TransactionRepository` to perform CRUD operations.
+- Data Access Layer: The `TransactionRepository` is responsible for interacting with the database and performing database operations related to transactions.
+- DTOs (Data Transfer Objects): The `CreateTransactionDto` and `UpdateTransactionDto` are used for data validation and to define the structure of the request payloads.
+- Entity: The `Transaction` entity represents a transaction record in the database.
+
+## Code Structure
+
+The code follows the recommended structure for a NestJS application:
+
+- Controllers: The controller classes are defined under the `controllers` directory. In this case, the `TransactionController` is responsible for handling transaction-related requests.
+- Services: The service classes are defined under the `services` directory. Here, the `TransactionService` implements the business logic for transactions.
+- DTOs: The DTO classes, `CreateTransactionDto` and `UpdateTransactionDto`, are defined under the `dto` directory. These DTOs help validate and structure the request payloads.
+- Entities: The `Transaction` entity class is defined under the `entities` directory. It represents a transaction record in the database.
+- Dependency Injection: NestJS leverages dependency injection, and the code demonstrates it by injecting the `TransactionService` and `TransactionRepository` into the controller and service classes.
+
+## Design Decisions
+
+- Validation: The `ValidationPipe` is applied as a global pipe for the `create` method in the `TransactionController`. It automatically validates the incoming request payload using the `CreateTransactionDto` schema.
+- Caching: The `TransactionService` utilizes caching to improve performance. It uses the `CacheInterceptor` provided by the `@nestjs/cache` package to cache the `findAll` method's response. The cached data is stored using the specified `cacheKey`, and the cache is invalidated when a new transaction is created.
+- Cache Manager: The `CACHE_MANAGER` token is injected into the `TransactionService` to interact with the cache. The `CacheInterceptor` and `Cache` interface are imported from the `@nestjs/cache-manager` and `cache-manager` packages, respectively.
+
+Overall, the code follows best practices for creating a controller-service architecture in NestJS. It demonstrates the separation of concerns, validation using DTOs, database operations through a repository, and caching to improve performance.
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
